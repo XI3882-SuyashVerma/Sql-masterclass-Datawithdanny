@@ -182,5 +182,27 @@ FROM trading.transaction
 GROUP BY member_id
 ORDER BY Buy_sell_ratio DESC
 
+--Question 8 - Latest date and oldest date of Transaction
+select min(txn_date) as oldest_date, max(txn_date) as Latest_date
+from trading.transactions
 
+--Question 9 -- Range of market data in prices table
+select max(market_date) as Latest_Date , min(market_date) as Oldest_Date
+from trading.prices
 
+--Question 10 - Which top 3 mentors have the most Bitcoin quantity as of the 29th of August?
+
+select m1.first_name, 
+sum(
+	case 
+		when txn_type = 'BUY' then t1.quantity
+		when txn_type = 'SELL' then -t1.quantity
+	end
+) as total_volume
+from trading.transactions as t1
+inner join trading.members as m1
+ on t1.member_id = m1.member_id
+where ticker = 'BTC'
+group by m1.first_name
+ORDER BY total_volume DESC
+limit 3
